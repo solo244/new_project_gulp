@@ -1,0 +1,10 @@
+// Importing templates
+@import "template/vars";
+@import "template/reset";
+@import "template/global";
+
+// Importing modules
+@import "modules/menu";
+
+// Importing pages
+@import "pages/home";
