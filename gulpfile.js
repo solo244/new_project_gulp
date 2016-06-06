@@ -15,21 +15,21 @@ var browserSync = require('browser-sync').create();
 
 gulp.task('sass', function(){
   return gulp.src('dev/css/*.scss')
-    .pipe(sass()) // Using gulp-sass
+    .pipe(sass())
     .pipe(gulp.dest('dist/css'))
     .pipe(browserSync.reload({
       stream: true
     }));
 });
 
-gulp.task('browserSync', function() {
+gulp.task('serve', ['sass'], function() {
+
   browserSync.init({
-    server: {
-      baseDir: 'dist'
-    },
+    proxy: "http://localhost/new_project_gulp/dist/"
   });
+
+  gulp.watch('dev/css/**/*.scss', ['sass']);
+  gulp.watch("dev/content/**/*.jade").on('change', browserSync.reload);
 });
 
-gulp.task('watch', ['browserSync', 'sass'], function (){
-  gulp.watch('dev/css/*.scss', ['sass']);
-});
+gulp.task('default', ['serve']);
