@@ -53,8 +53,6 @@ Temporary Items
 
 ### grunt ###
 # Grunt usually compiles files inside this directory
-build/
-dist/
 _old/
 
 # Grunt usually preprocesses files such as coffeescript, compass... inside the .tmp directory
