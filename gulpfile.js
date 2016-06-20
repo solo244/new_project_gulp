@@ -49,9 +49,8 @@ gulp.task('jade', function() {
         return !/\/_/.test(file.path) && !/^_/.test(file.relative);
     }))
     .pipe(jade({ pretty: true, basedir: "dev/content/_template/" }))
-    .pipe(gulp.dest('dist'))
-    .pipe(browserSync.reload({ stream:true })
-  );
+    .pipe(gulp.dest('dist'));
+    
 });
 
 gulp.task('useref', function(){
