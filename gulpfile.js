@@ -102,7 +102,25 @@ gulp.task('default', function() {
 
 //gulp.task('default', ['serve']);
 
+/*Vars
+Notify
+Concat
+Uglify
+Sass
+Postscss - autoprefixer
+cssmin
+browserSync
+jade
+copy: images, fonts, ftp
+imagemin
+string-replace
+replace
+watch: scripts, css, jade
+ftp
 
+defaults: concat, uglify, sass, postcss, cssmin, jade, copy fonts, copy images, imagemin, browser sync, watch
+dist: concat', 'uglify', 'sass', 'postcss', 'cssmin', 'jade', 'copy:fonts', 'copy:images', 'imagemin', 'copy:ftp', 'string-replace', ‘replace
+ftp: copy:ftp', 'string-replace', 'replace', 'ftp-deploy*/
 
 
 
