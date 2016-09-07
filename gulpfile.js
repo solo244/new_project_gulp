@@ -13,29 +13,17 @@ var gulp = require('gulp'),
     autoprefixer = require('gulp-autoprefixer'),
     jade = require('gulp-jade'),
     filter = require('gulp-filter'),
+    imagemin = require('gulp-imagemin'),
+    cache = require('gulp-cache'),
+    del = require('del'),
     runSequence = require('run-sequence'),
     browserSync = require('browser-sync').create();
 
-/*
-var del = require('del');
-var runSequence = require('run-sequence');
-// Jade
-var cached = require('gulp-cached');
-// Images
-var imagemin = require('gulp-imagemin');
-var cache = require('gulp-cache');
 // Prevent erros
 var plumber = require('gulp-plumber'); //new
-*/
-
-// 0. Notifications
-/* ----
-.pipe(notify({title: 'Less watcher', message: 'Recompiled ' + file, onLast: true}));
-}).on('error', notify.onError('Error compiling: ' + file + "\n" + '<%= error.message %>'));
----- */
 
 // 1. Concat and uglify JS
-gulp.task('js', function() {
+gulp.task('js', function(){
   return gulp.src('dev/js/main/*.js')
     .pipe(sourcemaps.init())
     .pipe(concat('main.min.js'))
@@ -44,6 +32,13 @@ gulp.task('js', function() {
     .pipe(notify({title: 'JS', message: 'Done with JS', onLast: true}))
     .pipe(gulp.dest('build/js'))
     .pipe(browserSync.reload({ stream: true }));
+});
+
+gulp.task('vendors', function(){
+  return gulp.src('dev/js/vendor/*.js')
+    .pipe(concat('vendor.min.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest('build/js'));
 });
 
 // 2. SASS, autoprefix CSS & minify CSS
@@ -61,7 +56,7 @@ gulp.task('css', function(){
 });
 
 // 3. Compile Jade
-gulp.task('jade', function() {
+gulp.task('jade', function(){
   return gulp.src('dev/content/**/*.jade')
     .pipe(filter(function (file) {
         return !/\/_/.test(file.path) && !/^_/.test(file.relative);
@@ -72,207 +67,46 @@ gulp.task('jade', function() {
     .pipe(browserSync.reload({ stream: true }));
 });
 
-// 4. Copy images, fonts and files to ftp folder dist
-
-// 5. Minify images
-
-// 6. BrowserSync
-
-// 7. Watch
-
-// 8. Replace text for dist folder
-
-// 9. FTP
-
-
+// 4. Optimize images
 gulp.task('images', function(){
-  return gulp.src('dev/images/**/*.+(png|jpg|gif|svg)')
-    .pipe(cache(imagemin()))
+  return gulp.src('dev/images/**/*.+(png|jpg|gif|svg|ico)')
+    //.pipe(cache(imagemin()))
+    .pipe(notify({title: 'Images', message: 'Done with images', onLast: true}))
     .pipe(gulp.dest('build/images')
   );
 });
 
-gulp.task('fonts', function() {
+// 5. Copy fonts
+gulp.task('fonts', function(){
   return gulp.src('dev/css/fonts/**/*')
-    .pipe(gulp.dest('dist/css/fonts')
+    .pipe(gulp.dest('build/css/fonts')
   );
 });
 
-// For the cleaning of the dist directory
-gulp.task('clean:dist', function() {
-  return del.sync('dist');
+// 6. Copy files to ftp folder dist
+gulp.task('dist', function(){
+  runSequence("vendors", "js", "css", "jade", "images", "fonts");
+
+  del.sync('dist');
+  gulp.src('build/**')
+    .pipe(gulp.dest('dist/')
+  );
+  return;
 });
 
+// 7. Replace text for dist folder
+
+// 8. FTP
+
+// For the cleaning of the dist directory
+
+
 gulp.task('default', function() {
-  runSequence("js", "css", "jade");
+  runSequence("vendors", "js", "css", "jade", "images", "fonts");
   browserSync.init({
     proxy: "http://localhost/" + project + "/build/"
   });
   gulp.watch("dev/css/**/*.scss", ["css"]);
   gulp.watch("dev/content/**/*.jade", ["jade"]).on('change', browserSync.reload);
-  gulp.watch("dev/js/**/*.js", ["js", "js", "js"]).on('change', browserSync.reload);
+  gulp.watch("dev/js/**/*.js", ["js"]).on('change', browserSync.reload);
 });
-
-//gulp.task('default', ['serve']);
-
-/*Vars
-Notify
-Concat
-Uglify
-Sass
-Postscss - autoprefixer
-cssmin
-browserSync
-jade
-copy: images, fonts, ftp
-imagemin
-string-replace
-replace
-watch: scripts, css, jade
-ftp
-
-defaults: concat, uglify, sass, postcss, cssmin, jade, copy fonts, copy images, imagemin, browser sync, watch
-dist: concat', 'uglify', 'sass', 'postcss', 'cssmin', 'jade', 'copy:fonts', 'copy:images', 'imagemin', 'copy:ftp', 'string-replace', ‘replace
-ftp: copy:ftp', 'string-replace', 'replace', 'ftp-deploy*/
-
-
-
-/*var lessFiles = fs.readdirSync(themeTelepsyRoot + 'compilers/less')
-    .filter(function (name) {
-        return name.substr(-5) === '.less';
-    })
-    .map(function (name) {
-        return name.substr(0, name.length - 5);
-    });
-
-var themeJs = ['lib', 'app'];
-var moduleJs = ['chat', 'util.badges', 'util.create_test', 'util.ehealth_form', 'util.execution'];
-
-var themeRoots = fs.readdirSync(themesRoot)
-    .filter(function (name) {
-        return name.indexOf('theme_') === 0 && name != 'theme_telepsy_old';
-    })
-    .map(function (name) {
-        return themesRoot + name + '/';
-    });
-
-gulp.task('default', ['watch']);
-gulp.task('build', ['build:less', 'build:js']);
-gulp.task('watch', ['watch:less', 'watch:js']);
-gulp.task('minify', ['minify:less', 'minify:js']);
-
-function compileLess(baseName) {
-    return gulp.src(themeTelepsyRoot + 'compilers/less/' + baseName + '.less')
-        .pipe(plumber({errorHandler: notify.onError('Error compiling: ' + baseName + "\n" + '<%= error.message %>')}))
-        .pipe(sourcemaps.init())
-        .pipe(less())
-        .pipe(autoprefixer({browsers: ['last 2 versions', 'ie >= 8', 'Firefox ESR']}))
-        .pipe(sourcemaps.write())
-        .pipe(gulp.dest(themeTelepsyRoot + 'assets/css'));
-}
-
-function compileColorScheme(themeRoot) {
-    return gulp.src(themeRoot + 'compilers/less/colorscheme.less')
-        .pipe(sourcemaps.init())
-        .pipe(less())
-        .pipe(autoprefixer({browsers: ['last 2 versions', 'ie >= 8', 'Firefox ESR']}))
-        .pipe(sourcemaps.write())
-        .pipe(gulp.dest(themeRoot + 'assets/css'));
-}
-
-lessFiles.forEach(function(file) {
-    gulp.task('less:' + file, function() {
-        compileLess(file);
-    });
-});
-
-gulp.task('less:colorscheme', function() {
-    var tasks = themeRoots.map(function(themeRoot) {
-        return compileColorScheme(themeRoot);
-    });
-
-    return merge(tasks);
-});
-
-gulp.task('build:less', lessFiles.map(function(key) { return 'less:' + key; }).concat('less:colorscheme'));
-
-gulp.task('minify:less', ['build:less'], function() {
-    var streams = [];
-
-    streams.push(gulp.src(themeTelepsyRoot + 'assets/css/*.css')
-        .pipe(cleanCss({
-            keepSpecialComments: 0,
-            compatibility: 'ie8'
-        }))
-        .pipe(gulp.dest(themeTelepsyRoot + 'assets/css/')));
-
-    streams = streams.concat(themeRoots.map(function(themeRoot) {
-        var source = themeRoot + 'assets/css/colorscheme.css';
-
-        return gulp.src(source)
-            .pipe(cleanCss({
-                keepSpecialComments: 0,
-                compatibility: 'ie8'
-            }))
-            .pipe(gulp.dest(themeRoot + 'assets/css/'));
-    }));
-
-    return merge(streams);
-});
-
-gulp.task('watch:less', ['build:less'], function() {
-    lessFiles.forEach(function(file) {
-        watchLess(themeTelepsyRoot + 'compilers/less/' + file + '.less', {}, function() {
-            compileLess(file)
-                .pipe(notify({title: 'Less watcher', message: 'Recompiled ' + file, onLast: true}));
-        }).on('error', notify.onError('Error compiling: ' + file + "\n" + '<%= error.message %>'));
-    });
-
-    var name = 'theme_telepsy';
-    var themeRoot = themesRoot + name + '/';
-    watchLess(themeRoot + 'compilers/less/colorscheme.less', {name: name}, function() {
-        compileColorScheme(themeRoot)
-            .pipe(notify({title: 'Less watcher', message: 'Recompiled theme ' + name}));
-    }).on('error', notify.onError('Error compiling: ' + name + "\n" + '<%= error.message %>'));
-});
-
-themeJs.forEach(function (name) {
-    gulp.task('js:' + name, function(){
-        return gulp.src(themeTelepsyRoot + 'compilers/js/telepsy.' + name + '.js')
-            .pipe(rename('telepsy.' + name + '.min.js'))
-            .pipe(gulp.dest(themeTelepsyRoot + 'assets/js'));
-    });
-});
-
-moduleJs.forEach(function (name) {
-    gulp.task('js:' + name, function() {
-        return gulp.src(moduleRoot + 'compilers/js/telepsy.' + name + '.js')
-            .pipe(rename('telepsy.' + name + '.min.js'))
-            .pipe(gulp.dest(moduleRoot + 'assets/js/'));
-    });
-});
-
-gulp.task('build:js', themeJs.concat(moduleJs).map(function(name) { return 'js:' + name}));
-
-gulp.task('minify:js', ['build:js'], function() {
-    return merge(
-        gulp.src(themeTelepsyRoot + 'assets/js/*.js')
-            .pipe(uglify())
-            .pipe(gulp.dest(themeTelepsyRoot + 'assets/js')
-        ),
-        gulp.src(moduleRoot + 'assets/js/*.js')
-            .pipe(uglify())
-            .pipe(gulp.dest(moduleRoot + 'assets/js')
-        )
-    );
-});
-
-gulp.task('watch:js', ['build:js'], function() {
-    themeJs.forEach(function(name) {
-        gulp.watch(themeTelepsyRoot + 'compilers/js/telepsy.' + name + '.js', ['js:' + name]);
-    });
-    moduleJs.forEach(function(name) {
-        gulp.watch(moduleRoot + 'compilers/js/telepsy.' + name + '.js', ['js:' + name]);
-    });
-});
-*/
