@@ -11,15 +11,16 @@ var gulp = require('gulp'),
     sass = require('gulp-sass'),
     cssnano = require('gulp-cssnano'),
     autoprefixer = require('gulp-autoprefixer'),
+    jade = require('gulp-jade'),
+    filter = require('gulp-filter'),
+    runSequence = require('run-sequence'),
     browserSync = require('browser-sync').create();
 
 /*
 var del = require('del');
 var runSequence = require('run-sequence');
 // Jade
-var jade = require('gulp-jade');
 var cached = require('gulp-cached');
-var filter = require('gulp-filter');
 // Images
 var imagemin = require('gulp-imagemin');
 var cache = require('gulp-cache');
@@ -34,69 +35,54 @@ var plumber = require('gulp-plumber'); //new
 ---- */
 
 // 1. Concat and uglify JS
-gulp.task('scripts', function() {
+gulp.task('js', function() {
   return gulp.src('dev/js/main/*.js')
     .pipe(sourcemaps.init())
-      .pipe(concat('main.min.js'))
-      .pipe(uglify())
+    .pipe(concat('main.min.js'))
+    .pipe(uglify())
     .pipe(sourcemaps.write())
-      .pipe(notify({title: 'JS', message: 'Done with JS', onLast: true}))
-    .pipe(gulp.dest('build'))
+    .pipe(notify({title: 'JS', message: 'Done with JS', onLast: true}))
+    .pipe(gulp.dest('build/js'))
     .pipe(browserSync.reload({ stream: true }));
 });
 
 // 2. SASS, autoprefix CSS & minify CSS
-gulp.task('sass', function(){
+gulp.task('css', function(){
   return gulp.src('dev/css/main.scss')
     .pipe(sourcemaps.init())
-      .pipe(sass())
-      .pipe(autoprefixer({
-            browsers: ['last 2 versions'],
-            cascade: false
-        }))
-      .pipe(cssnano())
+    .pipe(sass())
+    .pipe(autoprefixer({browsers: ['last 2 versions', 'ie >= 8', 'Firefox ESR']}))
+    .pipe(cssnano())
     .pipe(sourcemaps.write('.'))
-      .pipe(rename("style.min.css"))
-      .pipe(notify({title: 'CSS', message: 'Done with CSS', onLast: true}))
-    .pipe(gulp.dest('build'))
+    .pipe(rename("style.min.css"))
+    .pipe(notify({title: 'CSS', message: 'Done with CSS', onLast: true}))
+    .pipe(gulp.dest('build/css'))
     .pipe(browserSync.reload({ stream: true }));
 });
 
-// 7. Compile Jade
-
-// 8. Copy images, fonts and files to ftp folder dist
-
-// 9. Minify images
-
-// 10. Replace text for dist folder
-
-// 6. BrowserSync
-
-// 11. Watch
-
-// 12. FTP
-
-// SASS, autoprefix and minify css
-/*gulp.task('sass', function(){
-  return gulp.src('dev/css/*.scss')
-    .pipe(sass())
-    .pipe(gulpIf('*.css', cssnano()))
-    .pipe(rename("css/style.css"))
-    .pipe(gulp.dest('build'))
-    .pipe(browserSync.reload({ stream: true })
-  );
-});*/
-
-// Compile Jade to HTML
+// 3. Compile Jade
 gulp.task('jade', function() {
   return gulp.src('dev/content/**/*.jade')
     .pipe(filter(function (file) {
         return !/\/_/.test(file.path) && !/^_/.test(file.relative);
     }))
     .pipe(jade({ pretty: true, basedir: "dev/content/_template/" }))
-    .pipe(gulp.dest('build'));
-
+    .pipe(notify({title: 'Jade', message: 'Done with Jade', onLast: true}))
+    .pipe(gulp.dest('build'))
+    .pipe(browserSync.reload({ stream: true }));
 });
+
+// 4. Copy images, fonts and files to ftp folder dist
+
+// 5. Minify images
+
+// 6. BrowserSync
+
+// 7. Watch
+
+// 8. Replace text for dist folder
+
+// 9. FTP
 
 
 gulp.task('images', function(){
@@ -112,20 +98,19 @@ gulp.task('fonts', function() {
   );
 });
 
+// For the cleaning of the dist directory
 gulp.task('clean:dist', function() {
   return del.sync('dist');
 });
 
 gulp.task('default', function() {
-  //runSequence("clean:dist", "jade", "sass", "useref", "images", "fonts");
-  // Open a local server
-  //browserSync.init({
-    //proxy: "http://localhost/" + project + "/dist/"
-  //});
-  // Add watch function for CSS, HTML and JS
-  //gulp.watch("dev/css/**/*.scss", ["sass"]);
-  //gulp.watch("dev/content/**/*.jade", ["jade", "useref"]).on('change', browserSync.reload);
-  //gulp.watch("dev/content/js/*.js", ["jade", "useref"]).on('change', browserSync.reload);
+  runSequence("js", "css", "jade");
+  browserSync.init({
+    proxy: "http://localhost/" + project + "/build/"
+  });
+  gulp.watch("dev/css/**/*.scss", ["css"]);
+  gulp.watch("dev/content/**/*.jade", ["jade"]).on('change', browserSync.reload);
+  gulp.watch("dev/js/**/*.js", ["js", "js", "js"]).on('change', browserSync.reload);
 });
 
 //gulp.task('default', ['serve']);
