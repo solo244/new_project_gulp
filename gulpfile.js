@@ -1,6 +1,6 @@
-// Custom
-var project = "new_project_gulp";
-// --
+var project = "new_project_gulp", // Local folder name
+    folder = ""; // Online folder, empty if root
+
 var gulp = require('gulp'),
     notify = require('gulp-notify'),
     concat = require('gulp-concat'),
@@ -16,11 +16,9 @@ var gulp = require('gulp'),
     imagemin = require('gulp-imagemin'),
     cache = require('gulp-cache'),
     del = require('del'),
+    replace = require('gulp-replace'),
     runSequence = require('run-sequence'),
     browserSync = require('browser-sync').create();
-
-// Prevent erros
-var plumber = require('gulp-plumber'); //new
 
 // 1. Concat and uglify JS
 gulp.task('js', function(){
@@ -85,8 +83,10 @@ gulp.task('fonts', function(){
 
 // 6. Copy files to ftp folder dist
 gulp.task('dist', function(){
-  runSequence("vendors", "js", "css", "jade", "images", "fonts");
+  runSequence("vendors", "js", "css", "jade", "images", "fonts", "copy", "replace");
+});
 
+gulp.task('copy', function(){
   del.sync('dist');
   gulp.src('build/**')
     .pipe(gulp.dest('dist/')
@@ -95,14 +95,29 @@ gulp.task('dist', function(){
 });
 
 // 7. Replace text for dist folder
+gulp.task('replace', function(){
+  gulp.src(['dist/**/*.html'])
+    .pipe(replace({
+      patterns: [
+        {
+          match: '/new_project_gulp/build',
+          replacement: 'mo'
+        }
+      ]
+    }))
+    .pipe(notify({title: 'Dist', message: 'Dist folder ready', onLast: true}))
+    .pipe(gulp.dest('dist/'));
+});
 
 // 8. FTP
 
-// For the cleaning of the dist directory
 
-
+// Default gulp task
 gulp.task('default', function() {
-  runSequence("vendors", "js", "css", "jade", "images", "fonts");
+  runSequence("vendors", "js", "css", "jade", "images", "fonts", "server");
+});
+
+gulp.task('server', function(){
   browserSync.init({
     proxy: "http://localhost/" + project + "/build/"
   });
