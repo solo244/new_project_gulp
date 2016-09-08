@@ -29,14 +29,16 @@ gulp.task('js', function(){
     .pipe(sourcemaps.write())
     .pipe(notify({title: 'JS', message: 'Done with JS', onLast: true}))
     .pipe(gulp.dest('build/js'))
-    .pipe(browserSync.reload({ stream: true }));
+    .pipe(browserSync.reload({ stream: true })
+  );
 });
 
 gulp.task('vendors', function(){
   return gulp.src('dev/js/vendor/*.js')
     .pipe(concat('vendor.min.js'))
     .pipe(uglify())
-    .pipe(gulp.dest('build/js'));
+    .pipe(gulp.dest('build/js')
+  );
 });
 
 // 2. SASS, autoprefix CSS & minify CSS
@@ -50,7 +52,8 @@ gulp.task('css', function(){
     .pipe(rename("style.min.css"))
     .pipe(notify({title: 'CSS', message: 'Done with CSS', onLast: true}))
     .pipe(gulp.dest('build/css'))
-    .pipe(browserSync.reload({ stream: true }));
+    .pipe(browserSync.reload({ stream: true })
+  );
 });
 
 // 3. Compile Jade
@@ -62,7 +65,8 @@ gulp.task('jade', function(){
     .pipe(jade({ pretty: true, basedir: "dev/content/_template/" }))
     .pipe(notify({title: 'Jade', message: 'Done with Jade', onLast: true}))
     .pipe(gulp.dest('build'))
-    .pipe(browserSync.reload({ stream: true }));
+    .pipe(browserSync.reload({ stream: true })
+  );
 });
 
 // 4. Optimize images
@@ -106,7 +110,8 @@ gulp.task('replace', function(){
       ]
     }))
     .pipe(notify({title: 'Dist', message: 'Dist folder ready', onLast: true}))
-    .pipe(gulp.dest('dist/'));
+    .pipe(gulp.dest('dist/')
+  );
 });
 
 // 8. FTP
