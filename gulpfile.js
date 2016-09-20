@@ -90,6 +90,7 @@ gulp.task('dist', function(){
   runSequence("vendors", "js", "css", "jade", "images", "fonts", "copy", "replace");
 });
 
+// 7. Copy all files from build to dist folder
 gulp.task('copy', function(){
   del.sync('dist');
   gulp.src('build/**')
@@ -115,7 +116,9 @@ gulp.task('replace', function(){
 });
 
 // 8. FTP
-
+/*
+ * Still add the option to ftp via Gulp
+ */
 
 // Default gulp task
 gulp.task('default', function() {
