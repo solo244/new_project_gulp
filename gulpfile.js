@@ -37,6 +37,7 @@ gulp.task('vendors', function(){
   return gulp.src('dev/js/vendor/*.js')
     .pipe(concat('vendor.min.js'))
     .pipe(uglify())
+    .pipe(notify({title: 'JS vendors', message: 'Done with JS vendors', onLast: true}))
     .pipe(gulp.dest('build/js')
   );
 });
@@ -131,5 +132,6 @@ gulp.task('server', function(){
   });
   gulp.watch("dev/css/**/*.scss", ["css"]);
   gulp.watch("dev/content/**/*.jade", ["jade"]).on('change', browserSync.reload);
-  gulp.watch("dev/js/**/*.js", ["js"]).on('change', browserSync.reload);
+  gulp.watch("dev/js/main/*.js", ["js"]).on('change', browserSync.reload);
+  gulp.watch("dev/js/vendor/*.js", ["vendors"]).on('change', browserSync.reload);
 });

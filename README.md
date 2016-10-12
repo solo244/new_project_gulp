@@ -1,5 +1,8 @@
 # New projects with Gulp v1.0
 
+## Version 1.1
+- Added vendor concat & minify in Gulp build
+
 ## Set up
 1. Clone files to a new directory
 2. `cd` to the this directory via command line/terminal
