@@ -1,8 +1,5 @@
 # New projects with Gulp v1.1
 
-## Version 1.1
-- Added vendor concat & minify in Gulp build
-
 ## Set up
 1. Clone files to a new directory
 2. `cd` to the this directory via command line/terminal
@@ -41,3 +38,6 @@
 - Chrome
 - Opera
 - Safari
+
+## Version 1.1
+- Added vendor concat & minify in Gulp build
