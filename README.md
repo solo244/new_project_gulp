@@ -1,4 +1,4 @@
-# New projects with Gulp v1.0
+# New projects with Gulp v1.1
 
 ## Version 1.1
 - Added vendor concat & minify in Gulp build
