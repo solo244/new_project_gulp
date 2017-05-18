@@ -9,7 +9,6 @@ var gulp = require('gulp'),
     concat = require('gulp-concat'),
     sourcemaps = require('gulp-sourcemaps'),
     uglify = require('gulp-uglify'),
-    //gulpIf = require('gulp-if'),
     rename = require("gulp-rename"),
     sass = require('gulp-sass'),
     cssnano = require('gulp-cssnano'),
@@ -18,10 +17,10 @@ var gulp = require('gulp'),
     filter = require('gulp-filter'),
     imagemin = require('gulp-imagemin'),
     cache = require('gulp-cache'),
-    //del = require('del'),
-    //replace = require('gulp-replace'),
+    del = require('del'),
+    replace = require('gulp-replace'),
     runSequence = require('run-sequence'),
-    webserver = require('gulp-webserver');
+    browserSync = require('browser-sync');
 
 // 0. ErrorHandler
 function handleError(error) {
@@ -36,9 +35,8 @@ gulp.task('js', function(){
     .pipe(concat('main.min.js'))
     .pipe(uglify())
     .pipe(sourcemaps.write())
-    //.pipe(notify({title: 'JS', message: 'Done with JS', onLast: true}))
-    .pipe(gulp.dest(buildPath + 'js')
-    //.pipe(browserSync.reload({ stream: true })
+    .pipe(gulp.dest(buildPath + 'js'))
+    .pipe(browserSync.reload({ stream: true })
   );
 });
 
@@ -46,7 +44,6 @@ gulp.task('vendors', function(){
   return gulp.src(assetPath + 'js/vendor/*.js')
     .pipe(concat('vendor.min.js'))
     .pipe(uglify())
-    //.pipe(notify({title: 'JS vendors', message: 'Done with JS vendors', onLast: true}))
     .pipe(gulp.dest(buildPath + 'js')
   );
 });
@@ -60,22 +57,20 @@ gulp.task('css', function(){
     .pipe(cssnano())
     .pipe(sourcemaps.write('.'))
     .pipe(rename("style.min.css"))
-    //.pipe(notify({title: 'CSS', message: 'Done with CSS', onLast: true}))
-    .pipe(gulp.dest(buildPath + 'css')
-    //.pipe(browserSync.reload({ stream: true })
+    .pipe(gulp.dest(buildPath + 'css'))
+    .pipe(browserSync.reload({ stream: true })
   );
 });
 
 // 3. Compile Pug
 gulp.task('pug', function(){
-  return gulp.src(assetPath + 'views/**/*.pug')
+  return gulp.src([assetPath + 'views/**/*.pug', !assetPath + 'views/_template/**/*.pug'])
     .pipe(filter(function (file) {
         return !/\/_/.test(file.path) && !/^_/.test(file.relative);
     }))
     .pipe(pug({ pretty: true, basedir: assetPath + 'views/_layout' }))
-    //.pipe(notify({title: 'Jade', message: 'Done with Jade', onLast: true}))
-    .pipe(gulp.dest(buildPath + '')
-    //.pipe(browserSync.reload({ stream: true })
+    .pipe(gulp.dest(buildPath + ''))
+    .pipe(browserSync.reload({ stream: true })
   );
 });
 
@@ -83,7 +78,6 @@ gulp.task('pug', function(){
 gulp.task('images', function(){
   return gulp.src(assetPath + 'images/**/*.+(png|jpg|gif|svg|ico)')
     .pipe(cache(imagemin()))
-    //.pipe(notify({title: 'Images', message: 'Done with images', onLast: true}))
     .pipe(gulp.dest(buildPath + 'images')
   );
 });
@@ -102,7 +96,7 @@ gulp.task('dist', function(){
 
 // 7. Replace text for dist folder
 gulp.task('replace', function(){
-  gulp.src(['dist/**/*.html'])
+  gulp.src([distPath + '**/*.html'])
     .pipe(replace({
       patterns: [
         {
@@ -111,8 +105,8 @@ gulp.task('replace', function(){
         }
       ]
     }))
-    //.pipe(notify({title: 'Dist', message: 'Dist folder ready', onLast: true}))
-    .pipe(gulp.dest('dist/')
+    .pipe(notify({title: 'Preparing ...', message: 'Dist folder ready', onLast: true}))
+    .pipe(gulp.dest(distPath + '')
   );
 });
 
@@ -131,22 +125,16 @@ gulp.task('copy', function(){
  */
 
 // Default gulp task
-gulp.task('default', function() {
-  runSequence("vendors", "js", "css", "pug", "images", "fonts", "webserver");
+gulp.task('default', function(){
+  browserSync({server: "./" + buildPath});
+  runSequence("vendors", "js", "css", "pug", "images", "fonts", "update");
 });
 
-gulp.task('webserver', function() {
-  gulp.src('./')
-    .pipe(notify({title: 'Server', message: 'Booting server', onLast: true}))
-    .pipe(webserver({
-      path: "build/",
-      livereload: true,
-      open: true,
-      fallback: "./build/index.html"
-    })
-  );
+gulp.task('update', function() {
   gulp.watch(assetPath + "css/**/*.scss", ["css"]);
-  gulp.watch(assetPath + "views/**/*.pug", ["pug"]);
-  gulp.watch(assetPath + "js/main/*.js", ["js"]);
-  gulp.watch(assetPath + "js/vendor/*.js", ["vendors"]);
+  gulp.watch(assetPath + "views/**/*.pug", ["pug"]).on('change', browserSync.reload);
+  gulp.watch(assetPath + "js/main/*.js", ["js"]).on('change', browserSync.reload);
+  gulp.watch(assetPath + "js/vendor/*.js", ["vendors"]).on('change', browserSync.reload);
+  gulp.watch(assetPath + "css/fonts/*", ["fonts"]).on('change', browserSync.reload);
+  gulp.watch(assetPath + "images/*", ["images"]).on('change', browserSync.reload);
 });
