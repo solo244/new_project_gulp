@@ -1,5 +1,5 @@
 var project   = "new_project_gulp", // Local folder name
-    folder    = "sandbox/blurg", // Online folder, empty if root
+    folder    = "", // Online folder, empty if root
     assetPath = "dev/", // Local asset path
     buildPath = "build/", // Local build path
     distPath  = "dist/"; // Local dist path
