@@ -99,4 +99,5 @@ jspm_packages
 
 # FTP information
 .ftppass
+.ftppass.json
 bower_components/

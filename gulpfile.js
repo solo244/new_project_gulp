@@ -1,10 +1,11 @@
-var project = "new_project_gulp", // Local folder name
-    folder = "", // Online folder, empty if root
+var project   = "new_project_gulp", // Local folder name
+    folder    = "sandbox/blurg", // Online folder, empty if root
     assetPath = "dev/", // Local asset path
-    buildPath = "build/"; // Local build path
-    distPath = "dist/"; // Remote asset path
+    buildPath = "build/", // Local build path
+    distPath  = "dist/"; // Local dist path
 
 var gulp = require('gulp'),
+    fs = require('fs'),
     notify = require('gulp-notify'),
     concat = require('gulp-concat'),
     sourcemaps = require('gulp-sourcemaps'),
@@ -19,16 +20,17 @@ var gulp = require('gulp'),
     cache = require('gulp-cache'),
     del = require('del'),
     replace = require('gulp-replace'),
-    runSequence = require('run-sequence'),
+    gulpSequence = require('gulp-sequence'),
+    ftp = require('vinyl-ftp'),
     browserSync = require('browser-sync');
 
-// 0. ErrorHandler
+// ErrorHandler
 function handleError(error) {
   console.error(error.message);
   this.emit('end');
 }
 
-// 1. Concat and uglify JS
+// Concat and uglify JS
 gulp.task('js', function(){
   return gulp.src(assetPath + 'js/main/*.js')
     .pipe(sourcemaps.init())
@@ -48,7 +50,7 @@ gulp.task('vendors', function(){
   );
 });
 
-// 2. SASS, autoprefix CSS & minify CSS
+// SASS, autoprefix CSS & minify CSS
 gulp.task('css', function(){
   return gulp.src(assetPath + 'css/main.scss')
     .pipe(sourcemaps.init())
@@ -62,7 +64,7 @@ gulp.task('css', function(){
   );
 });
 
-// 3. Compile Pug
+// Compile Pug
 gulp.task('pug', function(){
   return gulp.src([assetPath + 'views/**/*.pug', !assetPath + 'views/_template/**/*.pug'])
     .pipe(filter(function (file) {
@@ -74,7 +76,7 @@ gulp.task('pug', function(){
   );
 });
 
-// 4. Optimize images
+// Optimize images
 gulp.task('images', function(){
   return gulp.src(assetPath + 'images/**/*.+(png|jpg|gif|svg|ico)')
     .pipe(cache(imagemin()))
@@ -82,59 +84,73 @@ gulp.task('images', function(){
   );
 });
 
-// 5. Copy fonts
+// Copy fonts
 gulp.task('fonts', function(){
   return gulp.src(assetPath + 'css/fonts/**/*')
     .pipe(gulp.dest(buildPath + 'css/fonts')
   );
 });
 
-// 6. Copy files to ftp folder dist
-gulp.task('dist', function(){
-  runSequence("vendors", "js", "css", "pug", "images", "fonts", "copy", "replace");
-});
-
-// 7. Replace text for dist folder
-gulp.task('replace', function(){
-  gulp.src([distPath + '**/*.html'])
-    .pipe(replace({
-      patterns: [
-        {
-          match: '/new_project_gulp/build',
-          replacement: 'mo'
-        }
-      ]
-    }))
-    .pipe(notify({title: 'Preparing ...', message: 'Dist folder ready', onLast: true}))
-    .pipe(gulp.dest(distPath + '')
-  );
-});
-
-// 8. Copy all files from build to dist folder
+// Copy all files from build to dist folder
 gulp.task('copy', function(){
   del.sync(distPath + '');
-  gulp.src(buildPath + '**')
+  return gulp.src(buildPath + '**')
     .pipe(gulp.dest(distPath + '')
   );
+});
+
+// Replace text for dist folder
+gulp.task('replace', ['copy'], function(){
+  return gulp.src([distPath + '**/*.html'])
+    .pipe(replace(/src="\//g, 'src="/' + folder + '/'))
+    .pipe(replace(/href="\//g, 'href="/' + folder + '/'))
+    .pipe(gulp.dest(distPath + '')
+  );
+});
+
+// FTP
+gulp.task('deploy', ['replace'], function() {
+  var cleanJSON = require("strip-json-comments");
+  var config = fs.readFileSync(".ftppass", "utf8");
+  config = JSON.parse(cleanJSON(config));
+  var globs = [distPath + '**'];
+
+  var conn = ftp.create( {
+    host:     config.kvd.server,
+    user:     config.kvd.username,
+    password: config.kvd.password
+  });
+
+  return gulp.src( globs, { base: distPath, buffer: false } )
+    .pipe( conn.newer('/httpdocs/' + folder + '/'))
+    .pipe( conn.dest('/httpdocs/' + folder + '/')
+  );
+});
+
+// Clear dist folder after publish
+gulp.task('delete', ['deploy'], function(){
+  del.sync(distPath + '');
   return;
 });
 
-// 9. FTP
 /*
- * Still add the option to ftp via Gulp
+ * Default gulp task
  */
-
-// Default gulp task
-gulp.task('default', function(){
-  browserSync({server: "./" + buildPath});
-  runSequence("vendors", "js", "css", "pug", "images", "fonts", "update");
-});
+gulp.task('default', gulpSequence("vendors", "js", "css", "pug", "images", "fonts", "update"));
 
 gulp.task('update', function() {
+  browserSync({server: "./" + buildPath});
   gulp.watch(assetPath + "css/**/*.scss", ["css"]);
   gulp.watch(assetPath + "views/**/*.pug", ["pug"]).on('change', browserSync.reload);
   gulp.watch(assetPath + "js/main/*.js", ["js"]).on('change', browserSync.reload);
   gulp.watch(assetPath + "js/vendor/*.js", ["vendors"]).on('change', browserSync.reload);
   gulp.watch(assetPath + "css/fonts/*", ["fonts"]).on('change', browserSync.reload);
   gulp.watch(assetPath + "images/*", ["images"]).on('change', browserSync.reload);
+});
+
+/*
+ * Deployment gulp task via ftp
+ */
+gulp.task('ftp', function (cb) {
+  gulpSequence("vendors", "js", "css", "pug", "images", "fonts", "copy", "replace", "deploy", "delete")(cb);
 });
