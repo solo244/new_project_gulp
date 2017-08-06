@@ -1,4 +1,4 @@
-# New projects with Gulp v1.1
+# New projects with Gulp v1.2
 
 ## Set up
 1. Clone files to a new directory
