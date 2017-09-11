@@ -1,119 +1,127 @@
-var project   = "new_project_gulp", // Local folder name
-    folder    = "", // Online folder, empty if root
-    assetPath = "dev/", // Local asset path
-    buildPath = "build/", // Local build path
-    distPath  = "dist/"; // Local dist path
-
-var gulp = require('gulp'),
-    fs = require('fs'),
-    notify = require('gulp-notify'),
-    concat = require('gulp-concat'),
-    sourcemaps = require('gulp-sourcemaps'),
-    uglify = require('gulp-uglify'),
-    rename = require("gulp-rename"),
-    sass = require('gulp-sass'),
-    cssnano = require('gulp-cssnano'),
-    autoprefixer = require('gulp-autoprefixer'),
-    pug = require('gulp-pug'),
-    filter = require('gulp-filter'),
-    imagemin = require('gulp-imagemin'),
-    cache = require('gulp-cache'),
-    del = require('del'),
-    replace = require('gulp-replace'),
+// Load all plugins from the package.json file
+var pkg = require("./package.json"),
+    gulp = require("gulp"),
     gulpSequence = require('gulp-sequence'),
-    ftp = require('vinyl-ftp'),
-    browserSync = require('browser-sync');
-
-// ErrorHandler
-function handleError(error) {
-  console.error(error.message);
-  this.emit('end');
-}
+    $ = require("gulp-load-plugins")({
+      pattern: ["*"],
+      scope: ["devDependencies"]
+    }),
+    onError = function(err) {
+      console.log(err);
+    };
 
 // Concat and uglify JS
-gulp.task('js', function(){
-  return gulp.src(assetPath + 'js/main/*.js')
-    .pipe(sourcemaps.init())
-    .pipe(concat('main.min.js'))
-    .pipe(uglify())
-    .pipe(sourcemaps.write())
-    .pipe(gulp.dest(buildPath + 'js'))
-    .pipe(browserSync.reload({ stream: true })
+gulp.task('js', function() {
+  $.fancyLog("-> Compiling JS");
+  return gulp.src(pkg.paths.assets.js_main + "*.js")
+    .pipe($.plumber({errorHandler: onError}))
+    .pipe($.sourcemaps.init())
+    .pipe($.concat(pkg.vars.js))
+    .pipe($.uglify())
+    .pipe($.sourcemaps.write("."))
+    .pipe($.size({gzip: true, showFiles: false}))
+    .pipe(gulp.dest(pkg.paths.build.js))
+    .pipe($.browserSync.reload({ stream: true })
   );
 });
 
-gulp.task('vendors', function(){
-  return gulp.src(assetPath + 'js/vendor/*.js')
-    .pipe(concat('vendor.min.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest(buildPath + 'js')
+gulp.task('vendors', function() {
+  $.fancyLog("-> Compiling JS vendors");
+  return gulp.src(pkg.paths.assets.js_vendors + "*.js")
+    .pipe($.plumber({errorHandler: onError}))
+    .pipe($.concat(pkg.vars.vendors))
+    .pipe($.uglify())
+    .pipe($.size({gzip: true, showFiles: true}))
+    .pipe(gulp.dest(pkg.paths.build.js))
+    .pipe($.browserSync.reload({ stream: true })
   );
 });
 
 // SASS, autoprefix CSS & minify CSS
 gulp.task('css', function(){
-  return gulp.src(assetPath + 'css/main.scss')
-    .pipe(sourcemaps.init())
-    .pipe(sass())
-    .pipe(autoprefixer({browsers: ['last 2 versions', 'ie >= 8', 'Firefox ESR']}))
-    .pipe(cssnano())
-    .pipe(sourcemaps.write('.'))
-    .pipe(rename("style.min.css"))
-    .pipe(gulp.dest(buildPath + 'css'))
-    .pipe(browserSync.reload({ stream: true })
+  $.fancyLog("-> Compiling SCSS to CSS");
+  return gulp.src(pkg.paths.assets.sass + pkg.vars.sass)
+    .pipe($.plumber({errorHandler: onError}))
+    .pipe($.sourcemaps.init())
+    .pipe($.sass().on("error", $.sass.logError))
+    .pipe($.cached("sass_compile"))
+    .pipe($.autoprefixer({browsers: ['last 2 versions', 'ie >= 8', 'Firefox ESR']}))
+    .pipe($.cssnano({
+      discardComments: {
+        removeAll: true
+      },
+      discardDuplicates: true,
+      discardEmpty: true,
+      minifyFontValues: true,
+      minifySelectors: true
+    }))
+    .pipe($.size({gzip: true, showFiles: true}))
+    .pipe($.sourcemaps.write('.'))
+    .pipe($.rename(pkg.vars.css))
+    .pipe(gulp.dest(pkg.paths.build.css))
+    .pipe($.browserSync.reload({ stream: true })
   );
 });
 
 // Compile Pug
 gulp.task('pug', function(){
-  return gulp.src([assetPath + 'views/**/*.pug', !assetPath + 'views/_template/**/*.pug'])
-    .pipe(filter(function (file) {
+  return gulp.src([pkg.paths.assets.pug + '**/*.pug', !pkg.paths.assets.pug + '_template/**/*.pug'])
+    .pipe($.filter(function (file) {
         return !/\/_/.test(file.path) && !/^_/.test(file.relative);
     }))
-    .pipe(pug({ pretty: true, basedir: assetPath + 'views/_layout' }))
-    .pipe(gulp.dest(buildPath + ''))
-    .pipe(browserSync.reload({ stream: true })
+    .pipe($.pug({ pretty: true, basedir: pkg.paths.assets.pug + '_layout' }))
+    //.pipe($.htmlmin({collapseWhitespace: true}))
+    .pipe(gulp.dest(pkg.paths.build.main + ''))
+    .pipe($.browserSync.reload({ stream: true })
   );
 });
 
 // Optimize images
 gulp.task('images', function(){
-  return gulp.src(assetPath + 'images/**/*.+(png|jpg|gif|svg|ico)')
-    .pipe(cache(imagemin()))
-    .pipe(gulp.dest(buildPath + 'images')
+  return gulp.src(pkg.paths.assets.images + '**/*.{png,jpg,jpeg,gif,svg,ico}')
+    .pipe($.cache($.imagemin({
+      progressive: true,
+      interlaced: true,
+      optimizationLevel: 8,
+      svgoPlugins: [{removeViewBox: false}],
+      verbose: true,
+      use: []
+    })))
+    .pipe(gulp.dest(pkg.paths.build.images)
   );
 });
 
 // Copy fonts
 gulp.task('fonts', function(){
-  return gulp.src(assetPath + 'css/fonts/**/*')
-    .pipe(gulp.dest(buildPath + 'css/fonts')
+  return gulp.src(pkg.paths.assets.main + 'fonts/**/*')
+    .pipe(gulp.dest(pkg.paths.build.main + 'fonts')
   );
 });
 
 // Copy all files from build to dist folder
 gulp.task('copy', function(){
-  del.sync(distPath + '');
-  return gulp.src(buildPath + '**')
-    .pipe(gulp.dest(distPath + '')
+  $.del.sync(pkg.paths.dist.main);
+  return gulp.src(pkg.paths.build.main + '**')
+    .pipe(gulp.dest(pkg.paths.dist.main)
   );
 });
 
 // Replace text for dist folder
 gulp.task('replace', ['copy'], function(){
-  return gulp.src([distPath + '**/*.html'])
-    .pipe(replace(/src="\//g, 'src="/' + folder + '/'))
-    .pipe(replace(/href="\//g, 'href="/' + folder + '/'))
-    .pipe(gulp.dest(distPath + '')
+  return gulp.src([pkg.paths.dist.main + '**/*.html'])
+    .pipe($.replace(/src="\//g, 'src="/' + pkg.paths.dist.online_folder))
+    .pipe($.replace(/href="\//g, 'href="/' + pkg.paths.dist.online_folder))
+    .pipe(gulp.dest(pkg.paths.dist.main + '')
   );
 });
 
 // FTP
 gulp.task('deploy', ['replace'], function() {
-  var cleanJSON = require("strip-json-comments");
-  var config = fs.readFileSync(".ftppass", "utf8");
+  var cleanJSON = require("strip-json-comments"),
+      globs = [pkg.paths.dist.main + '**'],
+      config = fs.readFileSync(".ftppass", "utf8");
+
   config = JSON.parse(cleanJSON(config));
-  var globs = [distPath + '**'];
 
   var conn = ftp.create( {
     host:     config.kvd.server,
@@ -121,36 +129,36 @@ gulp.task('deploy', ['replace'], function() {
     password: config.kvd.password
   });
 
-  return gulp.src( globs, { base: distPath, buffer: false } )
-    .pipe( conn.newer('/httpdocs/' + folder + '/'))
-    .pipe( conn.dest('/httpdocs/' + folder + '/')
+  return gulp.src(globs, { base: pkg.paths.dist.main, buffer: false })
+    .pipe(conn.newer('/httpdocs/' + pkg.paths.dist.online_folder))
+    .pipe(conn.dest('/httpdocs/' + pkg.paths.dist.online_folder)
   );
 });
 
 // Clear dist folder after publish
 gulp.task('delete', ['deploy'], function(){
-  del.sync(distPath + '');
+  $.del.sync(pkg.paths.dist.main);
   return;
 });
 
 /*
- * Default gulp task
+ * Dev gulp tasks
  */
 gulp.task('default', gulpSequence("vendors", "js", "css", "pug", "images", "fonts", "update"));
 
-gulp.task('update', function() {
-  browserSync({server: "./" + buildPath});
-  gulp.watch(assetPath + "css/**/*.scss", ["css"]);
-  gulp.watch(assetPath + "views/**/*.pug", ["pug"]).on('change', browserSync.reload);
-  gulp.watch(assetPath + "js/main/*.js", ["js"]).on('change', browserSync.reload);
-  gulp.watch(assetPath + "js/vendor/*.js", ["vendors"]).on('change', browserSync.reload);
-  gulp.watch(assetPath + "css/fonts/*", ["fonts"]).on('change', browserSync.reload);
-  gulp.watch(assetPath + "images/*", ["images"]).on('change', browserSync.reload);
+// Gulp watch task
+gulp.task("update", function() {
+  $.browserSync({ server: "./" + pkg.paths.build });
+  gulp.watch([pkg.paths.assets.sass + "**/*.scss"], ["css"]);
+  gulp.watch([pkg.paths.assets.js_vendors + "**/*.js"], ["vendors"]).on('change', $.browserSync.reload);
+  gulp.watch([pkg.paths.assets.js_main + "**/*.js"], ["js"]).on('change', $.browserSync.reload);
+  gulp.watch([pkg.paths.assets.images + "**/*"], ["images"]).on('change', $.browserSync.reload);
+  gulp.watch([pkg.paths.assets.pug + "**/*}"], ["pug"]).on('change', $.browserSync.reload);
 });
 
 /*
  * Deployment gulp task via ftp
  */
 gulp.task('ftp', function (cb) {
-  gulpSequence("vendors", "js", "css", "pug", "images", "fonts", "copy", "replace", "deploy", "delete")(cb);
+  $.gulpSequence("vendors", "js", "css", "pug", "images", "fonts", "copy", "replace", "deploy", "delete")(cb);
 });
