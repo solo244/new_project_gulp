@@ -4,10 +4,10 @@
 1. Clone files to a new directory
 2. `cd` to the this directory via command line/terminal
 3. Run `yarn install` to get your node_modules (default **.gitignore**)
-4. Check `package.json` and make changes in **//general info, paths, vars and url** where needed
+4. Check `package.json` and make changes in **general info, paths, vars and url** where needed
 5. Run **gulp commands** to start developing
 
-## gulp commands
+## Gulp commands
 - To run an active watch with BrowserSync, run `gulp`
 - To only run the JS vendor files: `gulp vendors`
 - To only run the JS custom files: `gulp js`
