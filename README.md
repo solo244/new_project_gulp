@@ -9,6 +9,7 @@
 
 ## Gulp commands
 - To run an active watch with BrowserSync, run `gulp`
+- To only run the Critical path for dist: `gulp critical`
 - To only run the JS vendor files: `gulp vendors`
 - To only run the JS custom files: `gulp js`
 - To only run the SASS files: `gulp css`
