@@ -1,5 +1,6 @@
 {
   "name": "new_project_gulp",
+  "folder": "new_project_gulp",
   "version": "1.3.0",
   "description": "A general template for new gulp projects",
   "main": "gulpfile.js",
@@ -15,10 +16,10 @@
       "pug": "dev/views/"
     },
     "build": {
-      "main": "test/",
-      "css": "test/css/",
-      "js": "test/js/",
-      "images": "test/images/"
+      "main": "build/",
+      "css": "build/css/",
+      "js": "build/js/",
+      "images": "build/images/"
     },
     "dist": {
       "main": "dist/",
@@ -33,7 +34,7 @@
   },
   "url": {
     "live": "https://github.com/solo244/new_project_gulp",
-    "local": "http://localhost:3000/"
+    "local": "http://localhost/"
   },
   "dependencies": {
     "browser-sync": "^2.18.13",
@@ -50,23 +51,24 @@
     "picturefill": "^3.0.2",
     "prismjs": "^1.5.1",
     "tiny-cookie": "^1.0.1",
+    "critical": "^0.9.1",
     "vue": "^2.2.0",
     "vue-resource": "^1.0.3"
   },
   "devDependencies": {
     "babel-plugin-transform-runtime": "^6.15.0",
     "babel-preset-es2015": "^6.16.0",
-    "del": "^2.2.0",
     "browser-sync": "^2.18.13",
     "chalk": "^1.1.3",
-    "critical": "0.8.0",
+    "critical": "^0.9.1",
+    "del": "^2.2.0",
     "fancy-log": "^1.2.0",
     "git-rev-sync": "^1.7.1",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^4.0.0",
     "gulp-babel": "^6.1.2",
-    "gulp-cached": "^1.1.1",
     "gulp-cache": "^0.4.6",
+    "gulp-cached": "^1.1.1",
     "gulp-concat": "^2.6.0",
     "gulp-cssnano": "^2.1.2",
     "gulp-debug": "^2.1.2",

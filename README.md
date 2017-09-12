@@ -71,4 +71,6 @@
 ## Version 1.3
 - Moved a lot of info to the package file (cleaning up the Gulpfile)
 - Added critical gulp module for above the fold content
+
+## Version 1.4 (todo)
 - Added gzipping as a gulp module when deploying

@@ -141,6 +141,28 @@ gulp.task('delete', ['deploy'], function(){
   return;
 });
 
+// Generate critical CSS & JS inline HTML
+gulp.task('critical', function (cllb) {
+  $.critical.generate({
+    inline: true,
+    base: 'build/',
+    src: 'index.html',
+    dimensions: [{
+      width: 320,
+      height: 480
+    },{
+      width: 768,
+      height: 1024
+    },{
+      width: 1280,
+      height: 960
+    }],
+    dest: 'index.html',
+    minify: true
+  });
+  return;
+});
+
 /*
  * Dev gulp tasks
  */
@@ -148,12 +170,12 @@ gulp.task('default', gulpSequence("vendors", "js", "css", "pug", "images", "font
 
 // Gulp watch task
 gulp.task("update", function() {
-  $.browserSync({ server: "./" + pkg.paths.build });
+  $.browserSync({ server: "./" + pkg.paths.build.main });
   gulp.watch([pkg.paths.assets.sass + "**/*.scss"], ["css"]);
   gulp.watch([pkg.paths.assets.js_vendors + "**/*.js"], ["vendors"]).on('change', $.browserSync.reload);
   gulp.watch([pkg.paths.assets.js_main + "**/*.js"], ["js"]).on('change', $.browserSync.reload);
   gulp.watch([pkg.paths.assets.images + "**/*"], ["images"]).on('change', $.browserSync.reload);
-  gulp.watch([pkg.paths.assets.pug + "**/*}"], ["pug"]).on('change', $.browserSync.reload);
+  gulp.watch([pkg.paths.assets.pug + "**/*}"], ["critical"]).on('change', $.browserSync.reload);
 });
 
 /*
