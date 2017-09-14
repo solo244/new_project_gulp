@@ -23,7 +23,7 @@
     },
     "dist": {
       "main": "dist/",
-      "online_folder": "sandbox/test/"
+      "online_folder": "sandbox/new/"
     }
   },
   "vars": {
@@ -53,6 +53,9 @@
     "tiny-cookie": "^1.0.1",
     "critical": "^0.9.1",
     "vue": "^2.2.0",
+    "vinyl-ftp": "^0.6.0",
+    "gulp-ftp": "^1.1.0",
+    "vinyl-source-stream": "^1.1.0",
     "vue-resource": "^1.0.3"
   },
   "devDependencies": {
