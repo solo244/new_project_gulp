@@ -73,7 +73,8 @@ gulp.task('pug', function(){
         return !/\/_/.test(file.path) && !/^_/.test(file.relative);
     }))
     .pipe($.pug({ pretty: true, basedir: pkg.paths.assets.pug + '_layout' }))
-    //.pipe($.htmlmin({collapseWhitespace: true}))
+    .pipe($.replace('min.css', 'min.css?v=' + Date.now()))
+    .pipe($.replace('min.js', 'min.js?v=' + Date.now()))
     .pipe(gulp.dest(pkg.paths.build.main + ''))
     .pipe($.browserSync.reload({ stream: true })
   );
@@ -179,7 +180,7 @@ gulp.task("update", function() {
   gulp.watch([pkg.paths.assets.js_vendors + "**/*.js"], ["vendors"]).on('change', $.browserSync.reload);
   gulp.watch([pkg.paths.assets.js_main + "**/*.js"], ["js"]).on('change', $.browserSync.reload);
   gulp.watch([pkg.paths.assets.images + "**/*"], ["images"]).on('change', $.browserSync.reload);
-  gulp.watch([pkg.paths.assets.pug + "**/*}"], ["pug"]).on('change', $.browserSync.reload);
+  gulp.watch([pkg.paths.assets.pug + "**/*"], ["pug"]).on('change', $.browserSync.reload);
 });
 
 /*
