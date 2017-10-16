@@ -16,6 +16,7 @@
 - To only run the Pug files: `gulp pug`
 - To only run the image files: `gulp images`
 - To only run the font files: `gulp fonts`
+- To only run the font files: `gulp favicons`
 
 ## Organisation
 - **Dev:** Add any and all `development` content here. `Pug` for html templates
