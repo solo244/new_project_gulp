@@ -98,14 +98,14 @@ gulp.task('images', function(){
 // Copy fonts
 gulp.task('fonts', function(){
   return gulp.src(pkg.paths.assets.main + 'fonts/**/*')
-    .pipe(gulp.dest(pkg.paths.build.main + 'fonts')
+    .pipe(gulp.dest(pkg.paths.build.css + 'fonts')
   );
 });
 
 // Copy favicons
 gulp.task('favicon', function(){
   return gulp.src(pkg.paths.assets.main + 'favicon/**/*')
-    .pipe(gulp.dest(pkg.paths.build.css + 'favicon')
+    .pipe(gulp.dest(pkg.paths.build.main + 'favicon')
   );
 });
 
