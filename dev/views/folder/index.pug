@@ -1,12 +1,13 @@
 doctype html
 html
   head
-    title KVD
+    title Folder - New Project Gulp
     include /header.pug
+    
   body
     include /nav.pug
 
-    p This is the first folder page
-    a(href="/") Back home
+    h2 This is the first folder page
+    a(href=$path + "") Back home
 
     include /footer.pug
