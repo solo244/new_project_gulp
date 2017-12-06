@@ -92,6 +92,7 @@ gulp.task("pug", function(){
     .pipe($.filter(function (file) {
         return !/\/_/.test(file.path) && !/^_/.test(file.relative);
     }))
+    .pipe($.data(function (file) { return { require: require }; }))
     .pipe($.pug({ pretty: true, basedir: pkg.paths.assets.pug + "_layout" }))
     .pipe($.replace("min.css", "min.css?v=" + Date.now()))
     .pipe($.replace("min.js", "min.js?v=" + Date.now()))
