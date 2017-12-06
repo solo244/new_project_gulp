@@ -96,6 +96,9 @@ gulp.task("pug", function(){
     .pipe($.pug({ pretty: true, basedir: pkg.paths.assets.pug + "_layout" }))
     .pipe($.replace("min.css", "min.css?v=" + Date.now()))
     .pipe($.replace("min.js", "min.js?v=" + Date.now()))
+    .pipe($.replace(".jpg", ".jpg?v=" + Date.now()))
+    .pipe($.replace(".png", ".png?v=" + Date.now()))
+    .pipe($.replace(".svg", ".svg?v=" + Date.now()))
     .pipe(gulp.dest(pkg.paths.build.main + ""))
     .pipe($.browserSync.reload({ stream: true })
   );
@@ -167,18 +170,8 @@ gulp.task("critical", ["copy"], function () {
   );
 });
 
-// Replace text for dist folder
-gulp.task("replace", ["critical"], function(){
-  image = path.join(__dirname, pkg.paths.dist.main + "replace.png");
-  return gulp.src([pkg.paths.dist.main + "**/*.html"])
-    .pipe($.replace(/src="\//g, 'src="/' + pkg.paths.dist.online_folder))
-    .pipe($.replace(/href="\//g, 'href="/' + pkg.paths.dist.online_folder))
-    .pipe(gulp.dest(pkg.paths.dist.main + "")
-  );
-});
-
 // FTP
-gulp.task("deploy", ["replace"], function() {
+gulp.task("deploy", ["critical"], function() {
   image = path.join(__dirname, pkg.paths.error + "deploy.png");
   var cleanJSON = require("strip-json-comments"),
       globs = [pkg.paths.dist.main + "**"],

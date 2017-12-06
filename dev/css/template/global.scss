@@ -1,9 +1,11 @@
-body{
+body {
   background-color: $white;
   font-family: $font-family;
+  text-align: center;
+  padding: 100px;
 }
 
-.container{
+.container {
   max-width: 1300px;
   margin: 0 auto;
 }

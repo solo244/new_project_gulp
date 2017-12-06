@@ -8,6 +8,8 @@ html
     include /nav.pug
     
     h1 Hello world!
+    img(src=$path + "images/one.png", alt="One")
+    h2 Your path is set to: #{$path}
     a(href="http://kenvandamme.be", target="_blank") kenvandamme.be
     
     include /footer.pug
