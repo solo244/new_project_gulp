@@ -24,7 +24,7 @@ var pkg = require("./package.json"),
 
 // Concat and uglify JS
 gulp.task("js", function() {
-  $.fancyLog("-> Compiling JS");
+  $.fancyLog("➜ Compiling JS");
   image = path.join(__dirname, pkg.paths.error + "js.png");
   return gulp.src(pkg.paths.assets.js_main + "*.js")
     .pipe($.plumber({errorHandler: onError}))
@@ -39,7 +39,7 @@ gulp.task("js", function() {
 });
 
 gulp.task("vendors", function() {
-  $.fancyLog("-> Compiling JS vendors");
+  $.fancyLog("➜ Compiling JS vendors");
   image = path.join(__dirname, pkg.paths.error + "vendors.png");
   return gulp.src(pkg.paths.assets.js_vendors + "*.js")
     .pipe($.plumber({errorHandler: onError}))
@@ -53,7 +53,7 @@ gulp.task("vendors", function() {
 
 // SASS, autoprefix CSS & minify CSS
 gulp.task("css", function(){
-  $.fancyLog("-> Compiling SCSS to CSS");
+  $.fancyLog("➜ Compiling SCSS to CSS");
   image = path.join(__dirname, pkg.paths.error + "sass.png");
   return gulp.src(pkg.paths.assets.sass + pkg.vars.sass)
     .pipe($.plumber({errorHandler: onError}))
@@ -86,7 +86,7 @@ gulp.task("css", function(){
 
 // Compile Pug
 gulp.task("pug", function(){
-  $.fancyLog("-> Compiling PUG to HTML");
+  $.fancyLog("➜ Compiling PUG to HTML");
   image = path.join(__dirname, pkg.paths.error + "pug.png");
   return gulp.src([pkg.paths.assets.pug + "**/*.pug", !pkg.paths.assets.pug + "_template/**/*.pug"])
     .pipe($.filter(function (file) {
@@ -106,7 +106,7 @@ gulp.task("pug", function(){
 
 // Optimize images
 gulp.task("images", function(){
-  $.fancyLog("-> Compiling IMAGES");
+  $.fancyLog("➜ Compiling IMAGES");
   image = path.join(__dirname, pkg.paths.error + "images.png");
   return gulp.src(pkg.paths.assets.images + "**/*.{png,jpg,jpeg,gif,svg,ico}")
     .pipe($.cache($.imagemin({
