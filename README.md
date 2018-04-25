@@ -1,4 +1,4 @@
-# New projects with Gulp v1.3
+# New projects with Gulp v1.3.2
 
 ## Set up
 1. Clone files to a new directory
@@ -29,6 +29,10 @@
   - **JS/main:** Contains all custom files -> `main.js`
 - **Build:** All dev changes are tracked in the *build* folder. These files are compiled for web friendly viewing. This is the working test directory when running a local server.
 - **Dist:** All build files are compiled for final host purposes in the *dist* folder. These files (css, js, html & images) are optimized for the web (minified & concatenated). Paths are changed where needed to fit the need of the server. Before upload this folder is emptied and after upload this folder is deleted.
+
+## Don't forgets..
+- Replace the Google key in your `package.json` file when going live
+- Leave the `$path` var to it's default value if your site exists in the root
 
 ## To publish via FTP
 - Before deploying, you need to have run a general build so you have a build folder that's up to date, then run the `gulp critical`, before finally running the `gulp ftp` command.
@@ -75,3 +79,4 @@
 ## Version 1.3
 - Moved a lot of info to the package file (cleaning up the Gulpfile)
 - Added critical gulp module for above the fold content
+- Added Google code via package file (1.3.2)
