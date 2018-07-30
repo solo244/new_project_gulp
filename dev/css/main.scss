@@ -1,10 +1,45 @@
-// Importing templates
-@import "template/vars";
-@import "template/reset";
-@import "template/global";
+/**
+ * Debug mode (dev env)
+ * Set debug mode to false for production
+ */
 
-// Importing modules
-@import "modules/menu";
+$debug: true;
 
-// Importing pages
-@import "pages/home";
+/**
+ * Hard reset
+ */
+
+@import "1_base/reset";
+
+/**
+ * Vendors
+ */
+
+@import "0_vendors/tippy";
+
+/**
+ * Base
+ */
+
+@import "1_base/vars";
+@import "1_base/functions";
+@import "1_base/normalise";
+@import "1_base/mixins";
+
+/**
+ * Layout
+ */
+
+@import "2_layout/container";
+
+/**
+ * Components
+ */
+
+@import "3_components/menu";
+
+/**
+ * Pages
+ */
+
+@import "4_pages/home";
