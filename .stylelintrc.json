@@ -1,0 +1,42 @@
+{
+  "ignoreFiles": "./app/Resources/assets/sass/0_lib/**",
+  "rules": {
+    "color-no-invalid-hex": true,
+    "font-family-no-duplicate-names": true,
+    "function-calc-no-unspaced-operator": true,
+    "function-linear-gradient-no-nonstandard-direction": true,
+    "unit-no-unknown": true,
+    "block-no-empty": true,
+    "comment-no-empty": true,
+    "no-extra-semicolons": true,
+    "unit-whitelist": ["em", "rem", "%", "s", "px", "deg"],
+    "declaration-no-important": true,
+    "selector-max-empty-lines": 1,
+    "color-hex-case": "upper",
+    "function-url-quotes": "always",
+    "number-leading-zero": "never",
+    "number-no-trailing-zeros": true,
+    "selector-attribute-quotes": "never",
+    "string-quotes": "double",
+    "length-zero-no-unit": true,
+    "unit-case": "lower",
+    "value-keyword-case": "lower",
+    "property-case": "lower",
+    "declaration-colon-space-after": "always",
+    "declaration-colon-space-before": "never",
+    "selector-pseudo-class-case": "lower",
+    "selector-pseudo-element-case": "lower",
+    "selector-pseudo-element-colon-notation": "double",
+    "selector-type-case": "lower",
+    "selector-list-comma-newline-after": "always",
+    "indentation": [ 2 , {
+      "indentClosingBrace": false,
+      "ignore": ["value"]
+    }],
+    "max-empty-lines": 2,
+    "no-eol-whitespace": true,
+    "declaration-property-unit-whitelist": {
+      "font-size": ["rem", "%"]
+    }
+  }
+}
