@@ -51,8 +51,23 @@ gulp.task("vendors", function() {
   );
 });
 
+// Provide fallback for jQuery
+gulp.task('jquery', function() {
+  $.fancyLog("➜ Providing jQuery fallback");
+  console.log(pkg.paths.assets.js + "jquery-3.3.1.min.js");
+  image = path.join(__dirname, pkg.paths.error + "vendors.png");
+  return gulp.src(pkg.paths.assets.js + "jquery-3.3.1.min.js")
+    .pipe($.plumber({errorHandler: onError}))
+    .pipe($.uglify())
+    .pipe($.rename("jquery.min.js"))
+    .pipe($.size({gzip: true, showFiles: true}))
+    .pipe(gulp.dest(pkg.paths.build.js))
+    .pipe($.livereload()
+  );
+});
+
 // SASS, autoprefix CSS & minify CSS
-gulp.task("css", function(){
+gulp.task("css", function() {
   $.fancyLog("➜ Compiling SCSS to CSS");
   image = path.join(__dirname, pkg.paths.error + "sass.png");
   return gulp.src(pkg.paths.assets.sass + pkg.vars.sass)
@@ -66,7 +81,7 @@ gulp.task("css", function(){
       }
     }))
     .pipe($.cached("sass_compile"))
-    .pipe($.autoprefixer({browsers: ["last 2 versions", "ie >= 8", "Firefox ESR"]}))
+    .pipe($.autoprefixer({browsers: ">0.25%"}))
     .pipe($.cssnano({
       discardComments: {
         removeAll: true
@@ -77,10 +92,10 @@ gulp.task("css", function(){
       minifySelectors: true
     }))
     .pipe($.size({gzip: true, showFiles: true}))
-    .pipe($.sourcemaps.write("."))
     .pipe($.rename(pkg.vars.css))
+    .pipe($.sourcemaps.write('./'))
     .pipe(gulp.dest(pkg.paths.build.css))
-    .pipe($.browserSync.reload({ stream: true })
+    .pipe($.livereload()
   );
 });
 
@@ -198,10 +213,11 @@ gulp.task("delete", ["deploy"], function(){
   return;
 });
 
-/*
+/**
  * Dev gulp tasks
  */
-gulp.task("default", gulpSequence("vendors", "js", "css", "pug", "favicon", "images", "fonts", "update"));
+
+gulp.task("default", gulpSequence("vendors", "js", "jquery", "css", "pug", "favicon", "images", "fonts", "update"));
 
 // Gulp watch task
 gulp.task("update", function() {
@@ -213,9 +229,10 @@ gulp.task("update", function() {
   gulp.watch([pkg.paths.assets.pug + "**/*"], ["pug"]).on("change", $.browserSync.reload);
 });
 
-/*
+/**
  * Deployment gulp task via ftp
  */
+
 gulp.task("ftp", function (cb) {
-  gulpSequence("vendors", "js", "css", "pug", "images", "fonts", "delete")(cb);
+  gulpSequence("vendors", "js", "jquery", "css", "pug", "images", "fonts", "delete")(cb);
 });
