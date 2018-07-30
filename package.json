@@ -11,6 +11,7 @@
     "assets": {
       "main": "dev/",
       "sass": "dev/css/",
+      "js": "dev/js/",
       "js_vendors": "dev/js/vendor/",
       "js_main": "dev/js/main/",
       "images": "dev/images/",
@@ -107,6 +108,7 @@
     "moment": "^2.14.1",
     "pa11y": "^4.11.0",
     "strip-json-comments": "^2.0.1",
+    "stylelint-config-standard": "^18.2.0",
     "vinyl-ftp": "^0.6.0",
     "vinyl-source-stream": "^1.1.0",
     "vueify": "^8.7.0"
