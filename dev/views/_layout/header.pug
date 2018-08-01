@@ -4,7 +4,7 @@
 - var $description = '' + pkg.description;
 - var $analytics = "'" + pkg.google + "'";
 
-// General 
+// General
 meta(charset="UTF-8")
 meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
 meta(name="viewport", content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1")
@@ -21,9 +21,11 @@ link(rel="icon", type="image/png", href=$path + "favicon/favicon-16x16.png", siz
 link(rel="manifest", href=$path + "favicon/manifest.json")
 link(rel="mask-icon", href=$path + "favicon/safari-pinned-tab.svg", color="#ffffff")
 meta(name="theme-color", content="#ffffff")
-  
-// Stylesheets  
-link(rel="stylesheet", type="text/css", href=$path + "css/style.min.css")
+
+// Stylesheets
+link(rel="preload", href=$path + "css/style.min.css", as="style", onload="this.rel='stylesheet'")
+noscript
+  link(rel="stylesheet", href=$path + "css/style.min.css")
 link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Karla:400,400i,700,700i")
 
 // Facebook Meta Tags
@@ -39,7 +41,7 @@ meta(name="twitter:title", content=$name)
 meta(name="twitter:description", content=$description)
 meta(name="twitter:image", content="")
 
-// Google analytics    
+// Google analytics
 script.
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
