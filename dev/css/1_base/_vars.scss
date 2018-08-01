@@ -1,0 +1,89 @@
+/**
+ * General
+ */
+
+$circle:        50%;
+$corners:       8px;
+$max-width:     100%;
+$spacer:        20px;
+$gutter:        15px;
+$border:        1px solid;
+
+/**
+ * Colors general
+ */
+
+$black:         #333333;
+$white:         #FFFFFF;
+$col-grey:      #797979;
+$grey: (
+  -2:           #EFEFEF,
+  -1:           #CCCCCC,
+  0:            $col-grey,
+  1:            darken($col-grey, 15%)
+);
+
+/**
+ * Shadows
+ */
+
+$shadow-size:   25px;
+$shadow-x:      0;
+$shadow-y:      0;
+$shadow: (
+  -1:           $shadow-x $shadow-y $shadow-size rgba(map-get($grey, 0), .3),
+  0:            $shadow-x $shadow-y $shadow-size rgba(map-get($grey, 0), .6),
+  1:            $shadow-x $shadow-y $shadow-size rgba(map-get($grey, 0), 1)
+);
+
+/**
+ * Buttons
+ */
+
+$btn-corners:   4px;
+$btn-padding:   14px 20px;
+
+/**
+ * Breakpoints
+ */
+
+$xs: 		        "30em";                     // 480px
+$s: 		        "48em";                     // 768px
+$m: 		        "64em";                     // 1024px
+$l: 		        "75em";                     // 1200px
+$xl: 		        "100em";                    // 1600px
+
+/**
+ * Fonts
+ */
+
+$font:          "Karla", "Arial", sans-serif;
+$font-size: (
+  -1:           1.2rem,
+  0:            1.4rem,
+  1:            1.8rem,
+  2:            2.5rem,
+  3:            3rem,
+  4:            4rem
+);
+$font-weight: (
+  -1:           300,
+  0:            400,
+  1:            600,
+  2:            800
+);
+$line-height: (
+  0:            2.2rem,
+  1:            3rem,
+  2:            3.8rem
+);
+$text-none:     none;
+$text-up:       uppercase;
+
+/**
+ * Animations
+ */
+
+$animate-slow:  all .6s;
+$animate:       all .3s;
+$animate-fast:  all .2s;

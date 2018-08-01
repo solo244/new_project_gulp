@@ -1,0 +1,32 @@
+/**
+ * General functions
+ */
+
+// font-size
+@function font-size($key) {
+	@return map-get($font-size, $key);
+}
+
+// font-weight
+@function font-weight($key) {
+	@return map-get($font-weight, $key);
+}
+
+// line-height
+@function line-height($key) {
+	@return map-get($line-height, $key);
+}
+
+// shadows
+@function shadow($key) {
+	@return map-get($shadow, $key);
+}
+
+/**
+ * Color functions
+ */
+
+// grey
+@function grey($key) {
+	@return map-get($grey, $key);
+}

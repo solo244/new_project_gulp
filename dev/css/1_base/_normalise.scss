@@ -1,0 +1,22 @@
+/**
+ * Normalise
+ */
+
+body {
+  background-color: $white;
+  font-family: $font;
+  text-align: center;
+  padding: 100px;
+}
+
+h1,
+h2,
+p,
+a {
+  margin: 20px auto;
+}
+
+ol,
+ul {
+  list-style-type: none;
+}
