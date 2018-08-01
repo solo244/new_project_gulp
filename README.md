@@ -1,4 +1,4 @@
-# New projects with Gulp v1.3.2
+# New projects with Gulp v1.4
 
 ## Set up
 1. Clone files to a new directory
@@ -80,3 +80,11 @@
 - Moved a lot of info to the package file (cleaning up the Gulpfile)
 - Added critical gulp module for above the fold content
 - Added Google code via package file (1.3.2)
+
+## Version 1.4
+- Added new CSS structure
+- Added stylelinter
+- Load in CSS with preload attribute
+
+## Version 1.x
+- Assets versioning on selected js files
