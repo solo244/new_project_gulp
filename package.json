@@ -39,28 +39,31 @@
     "live": "https://github.com/solo244/new_project_gulp",
     "local": "http://localhost/"
   },
+  "scripts": {
+    "cypress": "./node_modules/.bin/cypress open"
+  },
   "dependencies": {
     "browser-sync": "^2.18.13",
+    "critical": "^0.9.1",
     "del": "^2.2.0",
     "fg-loadcss": "^1.2.0",
     "flexboxgrid": "^6.3.1",
     "fontfaceobserver": "^2.0.5",
     "gulp-cache": "^0.4.6",
+    "gulp-ftp": "^1.1.0",
     "gulp-htmlmin": "^3.0.0",
     "gulp-sequence": "^0.4.6",
     "lazysizes": "^2.0.6",
     "loadjs": "^3.3.1",
     "normalize.css": "^5.0.0",
     "picturefill": "^3.0.2",
+    "pixrem": "^3.0.2",
     "prismjs": "^1.5.1",
     "tiny-cookie": "^1.0.1",
-    "critical": "^0.9.1",
-    "vue": "^2.2.0",
     "vinyl-ftp": "^0.6.0",
-    "gulp-ftp": "^1.1.0",
     "vinyl-source-stream": "^1.1.0",
-    "vue-resource": "^1.0.3",
-    "pixrem": "^3.0.2"
+    "vue": "^2.2.0",
+    "vue-resource": "^1.0.3"
   },
   "devDependencies": {
     "babel-plugin-transform-runtime": "^6.15.0",
@@ -68,6 +71,7 @@
     "browser-sync": "^2.18.13",
     "chalk": "^1.1.3",
     "critical": "^0.9.1",
+    "cypress": "^3.1.0",
     "del": "^2.2.0",
     "fancy-log": "^1.2.0",
     "git-rev-sync": "^1.7.1",
