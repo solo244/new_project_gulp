@@ -85,6 +85,7 @@
 - Added new CSS structure
 - Added stylelinter
 - Load in CSS with preload attribute
+- Preconnect font if from Google Webfonts (1.4.2)
 
 ## Version 1.x
 - Assets versioning on selected js files
