@@ -53,6 +53,10 @@
 }
 ```
 
+## To publish via Netlify
+- Setup the website on Netlify and verify all details.
+- Simply push to master branch to trigger the gulp command `gulp publish` and let Netlify do all the rest
+
 ## For more information
 - [Source and writer](http://kenvandamme.be/) or [on Github as solo244](https://github.com/solo244)
 

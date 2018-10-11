@@ -236,3 +236,11 @@ gulp.task("update", function() {
 gulp.task("ftp", function (cb) {
   gulpSequence("vendors", "js", "jquery", "css", "pug", "images", "fonts", "delete")(cb);
 });
+
+/**
+ * Deployment gulp task via Netlify
+ */
+
+gulp.task("publish", function (cb) {
+  gulpSequence("vendors", "js", "jquery", "css", "pug", "images", "favicon", "fonts", "replace")(cb);
+});
