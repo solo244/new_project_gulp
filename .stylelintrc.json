@@ -1,5 +1,5 @@
 {
-  "ignoreFiles": "./app/Resources/assets/sass/0_lib/**",
+  "ignoreFiles": "./dev/css/0_vendors/**",
   "rules": {
     "color-no-invalid-hex": true,
     "font-family-no-duplicate-names": true,
