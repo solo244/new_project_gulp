@@ -1,24 +1,11 @@
-(function ($) {
+(function () {
+  const $body = $("body");
 
-    /*
-     * Vars
-     */
-    var $body = $("html, body");
+  function started() {
+    console.log("File main.js is loaded");
+  }
 
-    /*
-     * OMG, it's a function
-     */
-    function started(e){
-      var $this = $(this);
-      console.log("File main.js is loaded");
-    }
-
-    /*
-     * Let's get ready to rumble
-     */
-    $(document).ready(function(){
-      // instantiate
-      $body.on("click", started);
-    });
-
-})(jQuery);
+  (function init() {
+    $body.on("click", started);
+  })();
+})();

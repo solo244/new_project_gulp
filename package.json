@@ -6,7 +6,7 @@
   "main": "gulpfile.js",
   "author": "ken van damme",
   "copyright": "solo244",
-  "google": "UA-XXXXXXXX-X",
+  "google": "",
   "paths": {
     "assets": {
       "main": "dev/",
