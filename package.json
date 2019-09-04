@@ -8,7 +8,9 @@
   "copyright": "solo244",
   "google": "",
   "scripts": {
-    "fix": "eslint ./dev/js --fix",
+    "fix": "eslint ./dev/js/**/*.js --fix",
+    "eslint": "eslint ./dev/js/**/",
+    "stylelint": "stylelint ./dev/css/**/",
     "lint-staged": "lint-staged"
   },
   "paths": {
@@ -45,8 +47,8 @@
     }
   },
   "lint-staged": {
-    "*.scss": "stylelint ./dev/css/**/",
-    "*.js": "eslint ./dev/js/**/"
+    "*.scss": "stylelint",
+    "*.js": "eslint"
   },
   "dependencies": {
     "jquery": "^3.4.1",
