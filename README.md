@@ -1,4 +1,4 @@
-# New projects with Gulp v1.5
+# New projects with Gulp v1.6
 
 ## Set up
 1. Clone files to a new directory
@@ -56,3 +56,6 @@
 
 ## Version 1.5
 - Updated to Gulp v4
+
+## Version 1.6
+- Added husky and linting for sass and js assets files
