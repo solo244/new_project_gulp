@@ -1,7 +1,6 @@
 /* --- Default vars and load in all plugins from package--- */
 const pkg = require("./package.json");
 const gulp = require("gulp");
-const browserSync = require("browser-sync").create();
 const source = require("vinyl-source-stream");
 const buffer = require("vinyl-buffer");
 const $ = require("gulp-load-plugins")({
@@ -19,13 +18,13 @@ function script() {
       debug: true,
       paths: ["./node_modules"]
     })
-    .transform($.babelify.configure({ presets: ["@babel/env"] }))
-    .bundle()
-    .pipe(source("bundle.js"))
-    .pipe(buffer())
-    .pipe($.uglify())
-    .pipe($.rename(pkg.vars.js))
-    .pipe(gulp.dest(pkg.paths.build.js))
+      .transform($.babelify.configure({ presets: ["@babel/env"] }))
+      .bundle()
+      .pipe(source("bundle.js"))
+      .pipe(buffer())
+      .pipe($.uglify())
+      .pipe($.rename(pkg.vars.js))
+      .pipe(gulp.dest(pkg.paths.build.js))
   );
 }
 
@@ -73,7 +72,7 @@ function pug() {
       .pipe($.filter(function (file) {
         return !/\/_/.test(file.path) && !/^_/.test(file.relative);
       }))
-      .pipe($.data(function (file) { return { require: require }; }))
+      .pipe($.data(function () { return { require: require }; }))
       .pipe($.pug({ pretty: true, basedir: pkg.paths.assets.pug + "_layout" }))
       .pipe(gulp.dest(pkg.paths.build.main + ""))
       .pipe($.replace("min.css", "min.css?v=" + Date.now()))
@@ -153,8 +152,10 @@ function replace() {
   return (
     gulp
       .src([pkg.paths.dist.main + "**/*.html"])
+      /*eslint-disable */
       .pipe($.replace(/src="\//g, 'src="/' + pkg.paths.dist.online_folder))
       .pipe($.replace(/href="\//g, 'href="/' + pkg.paths.dist.online_folder))
+      /*eslint-enable */
       .pipe(gulp.dest(pkg.paths.dist.main + ""))
   );
 }
